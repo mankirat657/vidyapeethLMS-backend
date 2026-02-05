@@ -6,14 +6,14 @@ const imagekit = new ImageKit({
     urlEndpoint : process.env.IMAGEKIT_URL_ENDPOINT
 });
 
-export async function uploadFile(file,filename){
+export async function uploadFile(fileBuffer,filename){
     try {
         const response = await imagekit.upload({
-            file : file,
-            filename : filename,
+            file : fileBuffer,
+            fileName : filename,
             folder: "practice"
         });
-        return resposne;
+        return response;
     } catch (error) {
         console.error(`error occured while uploading ${error}`)
         throw error;
