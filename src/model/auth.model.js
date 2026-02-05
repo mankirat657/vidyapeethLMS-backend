@@ -17,8 +17,8 @@ const authSchema = new mongoose.Schema({
       maxlength: 30
     }
   },
-  picture : {
-    type : String,
+  picture: {
+    type: String,
   },
   email: {
     type: String,
@@ -28,7 +28,7 @@ const authSchema = new mongoose.Schema({
     trim: true,
     match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   },
-
+  course : String,
   password: {
     type: String,
     minlength: 8,
@@ -57,8 +57,9 @@ const authSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user"
   },
-  verificationToken : String,
-
+  verificationToken: String,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   isVerified: {
     type: Boolean,
     default: function () {
@@ -68,4 +69,4 @@ const authSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-export const userModel = mongoose.model("user",authSchema);
+export const userModel = mongoose.model("user", authSchema);

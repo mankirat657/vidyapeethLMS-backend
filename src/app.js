@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import googleAuthRoutes from './routes/googleauth.routes.js'
 import authRoutes from './routes/auth.routes.js'
+import adminRoutes from './routes/admin.routes.js'
 import { Strategy  } from "passport-google-oauth20";
 import 'dotenv/config';
 import cookieParser from "cookie-parser";
@@ -21,7 +22,6 @@ passport.use(new Strategy({
     clientSecret : process.env.GOOGLE_CLIENT_SECRET,
     callbackURL : 'http://localhost:3000/api/auth/google/callback'
 }, (accessToken,refreshToken,profile,done) => {
-
     return done(null,profile)
 }
 ))
@@ -29,5 +29,6 @@ passport.use(new Strategy({
 /*routes */
 app.use('/api',googleAuthRoutes);
 app.use('/api',authRoutes)
+app.use('/admin',adminRoutes)
 
 export default app;

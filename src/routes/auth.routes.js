@@ -1,5 +1,5 @@
 import express from "express";
-import { loginUser, registerUser } from "../controller/auth.controller.js";
+import { forgotPassword, loginUser, logoutUser, registerUser, resetPassword } from "../controller/auth.controller.js";
 import multer from "multer";
 const router = express.Router();
 
@@ -9,6 +9,8 @@ const upload = multer({storage : multer.memoryStorage()})
 /*authetication routes */
 router.post("/register",upload.single("file"),registerUser)
 router.post("/login",loginUser)
-
+router.post("/forgotPassword",forgotPassword)
+router.post('/resetPassword',resetPassword);
+router.delete("/logout",logoutUser)
 
 export default router;

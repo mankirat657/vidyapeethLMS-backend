@@ -1,6 +1,6 @@
 import {validate} from "deep-email-validator";
 import crypto from 'crypto'
-import { sendVerificationEmail } from "../service/email.service.js";
+import { forgotPasswordEmail, sendVerificationEmail } from "../service/email.service.js";
 import { userModel } from "../model/auth.model.js";
 import { uploadFile } from "../service/storage.service.js";
 import { v4 } from "uuid";
@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken"
 export const registerUser = async(req,res) =>{
      try {
     const file = req.file;
-    const {firstName , lastName,email,password, } = req.body;
+    const {firstName , lastName,email,password,course } = req.body;
     if(!firstName || !lastName || !email || !password){
         return res.status(400).json({
             message : "firstName, lastName, email or password is required"
@@ -46,7 +46,8 @@ export const registerUser = async(req,res) =>{
         isVerified:false,
         verificationToken : verificationToken,
         picture : result.url,
-        role : "user"
+        role : "user",
+        course : course
         
     })
     await sendVerificationEmail(email,verificationToken)
@@ -100,3 +101,65 @@ export const loginUser = async(req,res) => {
     })       
     }   
 }
+export const logoutUser = async(req,res) => {
+    try {
+        res.cookie("token","");
+
+        return res.status(200).json({
+            message : "user logout successfully"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message : "error occured while logout"
+        })        
+    }
+}
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: "Email is required" });
+
+        const user = await userModel.findOne({ email });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const token = crypto.randomBytes(32).toString("hex");
+        user.resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+        user.resetPasswordExpires = Date.now() + 3600000; 
+        await user.save();
+
+        await forgotPasswordEmail(email, token);
+
+        res.json({ message: "Reset password email sent. Check your inbox!" });
+    } catch (error) {
+        res.status(500).json({ message: `Error: ${error.message}` });
+    }
+};
+export const resetPassword = async (req, res) => {
+    try {
+        const { email, token, newPassword } = req.body;
+        if (!email || !token || !newPassword) {
+            return res.status(400).json({ message: "Email, token, and new password are required" });
+        }
+
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+        const user = await userModel.findOne({
+            email,
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) return res.status(400).json({ message: "Invalid or expired token" });
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        res.json({ message: "Password reset successful!" });
+    } catch (error) {
+        res.status(500).json({ message: `Error: ${error.message}` });
+    }
+};

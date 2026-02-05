@@ -47,3 +47,50 @@ export const sendVerificationEmail = async(email,token) =>{
     `
     })
 }
+export const forgotPasswordEmail = async (email, token) => {
+    const link = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
+    await transporter.sendMail({
+        from: `"Vidyapeeth LMS" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Reset Your Password - Vidyapeeth LMS",
+        html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <div style="background-color: #ef4444; color: white; text-align: center; padding: 30px 20px;">
+                    <h1 style="margin: 0; font-size: 24px;">Vidyapeeth LMS</h1>
+                </div>
+                <div style="padding: 30px 20px; text-align: center;">
+                    <h2 style="color: #111827;">Reset Your Password</h2>
+                    <p style="color: #4b5563; font-size: 16px;">
+                        We received a request to reset your password. Click the button below to set a new password for your account.
+                    </p>
+                    <a href="${link}" 
+                        style="
+                            display: inline-block;
+                            padding: 15px 25px;
+                            margin: 20px 0;
+                            font-size: 16px;
+                            color: white;
+                            background-color: #ef4444;
+                            text-decoration: none;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.backgroundColor='#dc2626'"
+                    >
+                        Reset Password
+                    </a>
+                    <p style="color: #9ca3af; font-size: 14px;">
+                        If you did not request a password reset, you can safely ignore this email.
+                    </p>
+                </div>
+                <div style="background-color: #f3f4f6; text-align: center; padding: 15px 20px; font-size: 12px; color: #6b7280;">
+                    © 2026 Vidyapeeth LMS. All rights reserved.
+                </div>
+            </div>
+        </div>
+        `
+    });
+}
