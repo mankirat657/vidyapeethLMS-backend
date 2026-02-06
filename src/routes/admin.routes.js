@@ -1,6 +1,6 @@
 import express from "express";
 import { verifyUser } from "../middleware/auth.middleware.js";
-import { createSubject, deleteSubject, updateSubject } from "../controller/admin.controller.js";
+import { createQuestionAnswers, createSubject, deleteSubject, updateSubject } from "../controller/admin.controller.js";
 
 const router = express.Router();
 
@@ -20,6 +20,6 @@ router.post('/updateSubject/:id',verifyUser,updateSubject)
 router.delete('/deleteSubject/:id',verifyUser,deleteSubject)
 
 /*Question/Answers routes */
-
+router.post('/questionAnswers/:id',verifyUser,createQuestionAnswers)
 
 export default router

@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
 const answerSchema = new mongoose.Schema({
-    answerText: { type: String, required: true },
-    isAiGenerated: { type: Boolean, default: false }
+    answerText: { type: String, required: true,unique : true },
+    isAiGenerated: { type: Boolean, default: false },
+    
 });
 
 const questionSchema = new mongoose.Schema({
@@ -10,11 +11,13 @@ const questionSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: [4, "Minimum length of question should be 4"],
-        maxlength: [500, "Maximum length of question should be 500"]
+        maxlength: [500, "Maximum length of question should be 500"],
+        unique : true
     },
     questionType: {
         type: String,
         enum: ["Multiple_Choice", "Fill_In_The_Blanks", "Long_Answers", "True/False"],
+        default : "Long_Answers",
         required: true
     },
     weightage: { type: Number, default: 1 },
