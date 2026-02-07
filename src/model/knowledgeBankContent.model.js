@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const answerSchema = new mongoose.Schema({
-    answerText: { type: String, required: true,unique : true },
+    answerText: { type: String, required: true },
     isAiGenerated: { type: Boolean, default: false },
     
 });
@@ -12,7 +12,6 @@ const questionSchema = new mongoose.Schema({
         required: true,
         minlength: [4, "Minimum length of question should be 4"],
         maxlength: [500, "Maximum length of question should be 500"],
-        unique : true
     },
     questionType: {
         type: String,
