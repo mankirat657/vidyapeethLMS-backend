@@ -7,6 +7,11 @@ import { uploadFile } from "../service/storage.service.js";
 export const createSubject = async(req,res) =>{
     try {
         const {name,description} = req.body;
+        if(req.user.role !== "admin"){
+            return res.status(403).json({
+                message : "Access Denied"
+            })
+        }
         if(!name || !description){
             return res.status(400).json({
                 message : "name or description is required"
@@ -39,6 +44,11 @@ export const updateSubject = async(req,res) => {
     try {
         const {id : subjectId} = req.params;
         const{name,description} = req.body;
+         if(req.user.role !== "admin"){
+            return res.status(403).json({
+                message : "Access Denied"
+            })
+        }
         if(!name && !description){
             return res.status(400).json({
                 message : "one property is need to update cannot left empty"
@@ -71,6 +81,11 @@ export const updateSubject = async(req,res) => {
 export const deleteSubject = async(req,res)=>{
     try {
         const{id : subjectId} = req.params;
+        if(req.user.role !== "admin"){
+           return res.status(403).json({
+               message : "Access Denied"
+           })
+       }
         if(!subjectId){
             return res.status(400).json({
                 message : "pls provide the subject ID"
@@ -94,7 +109,11 @@ export const createQuestionAnswers = async (req, res) => {
     const { id: subjectId } = req.params;
     const file = req.file;
     let { questions, subjectWeightage, prompt } = req.body;
-
+ if(req.user.role !== "admin"){
+            return res.status(403).json({
+                message : "Access Denied"
+            })
+        }
     if (!subjectId) {
       return res.status(400).json({
         message: "subjectId not provided"
@@ -188,7 +207,11 @@ export const updateQuestionAnswer = async (req, res) => {
       weightage,
       updatedAnswer
     } = req.body;
-
+     if(req.user.role !== "admin"){
+            return res.status(403).json({
+                message : "Access Denied"
+            })
+        }
     if (!contentId || !questionId) {
       return res.status(400).json({
         message: "contentId or questionId missing"
@@ -244,7 +267,11 @@ export const updateQuestionAnswer = async (req, res) => {
 };
 export const deleteQuestionAnswer = async (req, res) => {
   const { id: subjectId, quesid: questionId } = req.params;
-
+ if(req.user.role !== "admin"){
+            return res.status(403).json({
+                message : "Access Denied"
+            })
+        }
   if (!subjectId || !questionId) {
     return res.status(400).json({
       message: "subject id or question id not found"

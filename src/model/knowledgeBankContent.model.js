@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const answerSchema = new mongoose.Schema({
     answerText: { type: String, required: true },
     isAiGenerated: { type: Boolean, default: false },
-    
 });
 
 const questionSchema = new mongoose.Schema({

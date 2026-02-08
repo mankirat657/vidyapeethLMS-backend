@@ -45,3 +45,72 @@ Rules:
     return response.text;
 
 }
+export const generateTest = async(prompt) => {
+  const response = await ai.models.generateContent({
+    model : "gemini-3-flash-preview",
+    contents : [
+      {
+        parts : [
+          {
+            text : `You are an academic test generator for IPU (Guru Gobind Singh Indraprastha University).
+
+Your task is to generate HIGH-QUALITY, EXAM-READY questions strictly following these rules:
+
+1. Generate questions ONLY in valid JSON format.
+2. Do NOT include explanations, markdown, comments, or extra text.
+3. The output must be an ARRAY of question objects.
+
+Each question object MUST follow this exact structure:
+
+{
+  "questionText": "string (clear, academic, exam-level)",
+  "questionType": "Multiple_Choice | Long_Answers | True/False | Fill_In_The_Blanks",
+  "totalMarks": number,
+  "answers": [
+    {
+      "answerText": "string",
+      "isCorrect": boolean
+    }
+  ],
+  "isAiGenerated": true
+}
+
+Rules per question type:
+
+• Multiple_Choice:
+  - Minimum 4 answer options
+  - At least ONE answer must have "isCorrect": true
+  - totalMarks between 1–5
+
+• True/False:
+  - Exactly 2 answers: "True" and "False"
+  - Only ONE answer is correct
+  - totalMarks = 1
+
+• Long_Answers:
+  - Only ONE answer object
+  - "isCorrect" must be true
+  - Answer should be a concise model answer
+  - totalMarks between 5–10
+
+• Fill_In_The_Blanks:
+  - Answer text must contain only the correct word or phrase
+  - totalMarks between 1–3
+
+General Rules:
+- Questions must be relevant to IPU university syllabus
+- Maintain academic tone (no casual language)
+- Avoid repeated or vague questions
+- Do NOT invent subjects or marks outside academic norms
+- Ensure JSON is directly usable in a backend API without modification
+`
+          }
+        ]
+      },
+      {
+        parts : [{text : prompt}]
+      }
+    ]
+  })
+  return response.text;
+}

@@ -2,6 +2,7 @@ import express from "express";
 import { verifyUser } from "../middleware/auth.middleware.js";
 import { createQuestionAnswers, createSubject, deleteQuestionAnswer, deleteSubject, updateQuestionAnswer, updateSubject } from "../controller/admin.controller.js";
 import multer from "multer";
+import { createTest } from "../controller/test.controller.js";
 const router = express.Router();
 const upload = multer({storage : multer.memoryStorage()})
 
@@ -29,6 +30,8 @@ router.post(
 );
 router.post('/deleteQuestionAnswer/:id/questionAnswerId/:quesid',verifyUser,deleteQuestionAnswer)
 /***************knowledge Bank api ends here *************************/
+/****** testApi's start from here ******/
+router.post('/createTest/:id',verifyUser,createTest) /* manual or ai creation */
 
 
 export default router
