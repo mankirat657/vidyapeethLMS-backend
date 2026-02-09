@@ -4,13 +4,13 @@ const ai = new GoogleGenAI({});
 
 
 export const generateQuestionAnswers = async (prompt) => {
-    const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: [
-            {
-                parts: [
-                    {
-                        text: `You are an IP university academic content generator.
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: [
+      {
+        parts: [
+          {
+            text: `You are an IP university academic content generator.
 
 Rules:
 - Output ONLY valid JSON
@@ -34,25 +34,25 @@ Rules:
   ]
 }
 `
-                    }
-                ]
-            },
-            {
-                parts : [{text : prompt}]
-            }
+          }
         ]
-    })
-    return response.text;
+      },
+      {
+        parts: [{ text: prompt }]
+      }
+    ]
+  })
+  return response.text;
 
 }
-export const generateTest = async(prompt) => {
+export const generateTest = async (prompt) => {
   const response = await ai.models.generateContent({
-    model : "gemini-3-flash-preview",
-    contents : [
+    model: "gemini-3-flash-preview",
+    contents: [
       {
-        parts : [
+        parts: [
           {
-            text : `You are an academic test generator for IPU (Guru Gobind Singh Indraprastha University).
+            text: `You are an academic test generator for IPU (Guru Gobind Singh Indraprastha University).
 
 Your task is to generate HIGH-QUALITY, EXAM-READY questions strictly following these rules:
 
@@ -108,9 +108,57 @@ General Rules:
         ]
       },
       {
-        parts : [{text : prompt}]
+        parts: [{ text: prompt }]
       }
     ]
   })
   return response.text;
 }
+
+export const validateAiTest = async (studentAnswer, modelAnswer, totalMarks) => {
+  try {
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      config: {
+        responseMimeType: "application/json",
+      },
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `You are an linent academic evaluator.
+Task: Grade the student's written answer by comparing it to the model answer.
+
+Evaluation Criteria:
+1. Focus on SEMANTIC MEANING and core concepts.
+2. Ignore minor grammatical errors or different wording.
+3. If the student captures the essential point (e.g., mentioning 2NF and non-prime attributes for 3NF), award full or partial marks.
+
+Parameters:
+- Model Answer: "${modelAnswer}"
+- Student Answer: "${studentAnswer}"
+- Max Marks: ${totalMarks}
+
+Return ONLY a JSON object: {"marksObtained": number}`
+            }
+          ]
+        }
+      ]
+    });
+
+
+    let rawText = response.text;
+    
+    if (rawText.includes("```")) {
+      rawText = rawText.replace(/```json|```/gi, "").trim();
+    }
+
+    return JSON.parse(rawText);
+
+  } catch (err) {
+    console.error("❌ Evaluation Error:", err);
+    return { marksObtained: 0, error: "AI failed to evaluate" };
+  }
+};
