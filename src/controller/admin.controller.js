@@ -3,6 +3,8 @@ import { contentModel } from "../model/knowledgeBankContent.model.js";
 import { subjectModel } from "../model/subject.model.js";
 import { generateQuestionAnswers } from "../service/ai.service.js";
 import { uploadFile } from "../service/storage.service.js";
+import { userModel } from "../model/auth.model.js";
+import { resultModel } from "../model/result.model.js";
 
 export const createSubject = async(req,res) =>{
     try {
@@ -200,7 +202,11 @@ export const updateQuestionAnswer = async (req, res) => {
       quesId: questionId,
       ansId: answerId
     } = req.params;
-
+   if(req.user.role !== "admin"){
+        return res.status(400).json({
+          message : "only admin can update Question Answers "
+        })
+      }
     const {
       updatedQuestion,
       questionType,
@@ -305,3 +311,91 @@ export const deleteQuestionAnswer = async (req, res) => {
     });
   }
 };
+export const blockStudent = async(req,res) => {
+    try {
+      const {stuId} = req.params;
+      if(req.user.role !== "admin"){
+        return res.status(400).json({
+          message : "only admin can block student"
+        })
+      }
+      const isStudentExist = await userModel.findOne({
+        _id : stuId
+      })
+      if(!isStudentExist){
+        return res.status(400).json({
+          message : "student not exist"
+        })
+      }
+      await userModel.findByIdAndUpdate(stuId, {
+        isBlocked : true
+      },{new : true})
+      return res.status(200).json({
+        message : "student is now blocked"
+      })
+    } catch (error) {
+        return res.status(500).json({
+          message : `error occured : ${error}`
+        })      
+    }
+}
+export const unblockStudent = async(req,res)=>{
+  try {
+    const{stuId} = req.params;
+   if(req.user.role !== "admin"){
+        return res.status(400).json({
+          message : "only admin can unblock student"
+        })
+      }
+    const isStudentExist = await userModel.findOne({_id : stuId});
+    if(!isStudentExist){
+      return res.status(400).json({
+        message : "student dont exist in database"
+      })
+    }
+    const ifUserBlocked = await userModel.findOne({_id : stuId, "isBlocked" : {$exists : true}});
+    if(!ifUserBlocked.isBlocked){
+      return res.status(400).json({
+        message : "user is not blocked"
+      })
+    }
+    await userModel.findByIdAndUpdate(stuId, {isBlocked : false},{new : true});
+
+    return res.status(200).json({
+      message : "student sucessfully unblocked"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message : `error occured : ${error}`
+    })
+  }
+}
+
+export const viewStudentResult = async(req,res)=>{
+  try {
+    const {stuId,subId} = req.params;
+    const isUserExist = await userModel.findOne({_id : stuId});
+    if(!isUserExist){
+      return res.status(400).json({
+        message : "student not found in the database"
+      })
+    }
+    const isStudentGivenTest = await resultModel.findOne({
+      student : stuId,
+      subject : subId
+    }).populate('subject').populate("student")
+    if(!isStudentGivenTest){
+      return res.status(400).json({
+        message : "student has not given this test"
+      })
+    }
+    return res.status(200).json({
+      message : "result fetched successfully",
+      isStudentGivenTest
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message : `error occured ${error}`
+    })
+  }
+}

@@ -9,7 +9,7 @@ const testSchema = new mongoose.Schema({
     },
     subject : {
         type : mongoose.Schema.Types.ObjectId,
-        refer : "subject",
+        ref : "subject",
         required : true,
         index : true
     },

@@ -4,17 +4,17 @@ import mongoose from "mongoose";
 const resultSchema = mongoose.Schema({
     student : {
         type : mongoose.Schema.Types.ObjectId,
-        refer : "user",
+        ref: "user",
         required : true,
     },
     subject : {
         type : mongoose.Schema.Types.ObjectId,
-        refer : "subject",
+        ref : "subject",
         required : true,
     },
     testId : {
         type : mongoose.Schema.Types.ObjectId,
-        refer : "test",
+        ref : "test",
         required : true,
     },
     totalAttempted : {

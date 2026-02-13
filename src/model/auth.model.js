@@ -57,6 +57,10 @@ const authSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user"
   },
+  isBlocked : {
+    type : Boolean,
+    default : false
+  },
   verificationToken: String,
   resetPasswordToken: String,
   resetPasswordExpires: Date,

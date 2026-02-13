@@ -152,7 +152,7 @@ export const validateTest = async (req, res) => {
                 }
 
             }
-            if (question.questionType === "Long_Answers") {
+            if (question.questionType === "Long_Answers" && question) {
                 if (!writtenAnswer) {
                     marksObtained = 0;
                     isCorrect = false;

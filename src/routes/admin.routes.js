@@ -1,6 +1,6 @@
 import express from "express";
 import { verifyUser } from "../middleware/auth.middleware.js";
-import { createQuestionAnswers, createSubject, deleteQuestionAnswer, deleteSubject, updateQuestionAnswer, updateSubject } from "../controller/admin.controller.js";
+import { blockStudent, createQuestionAnswers, createSubject, deleteQuestionAnswer, deleteSubject, unblockStudent, updateQuestionAnswer, updateSubject, viewStudentResult } from "../controller/admin.controller.js";
 import multer from "multer";
 import { createTest, validateTest } from "../controller/test.controller.js";
 const router = express.Router();
@@ -33,5 +33,9 @@ router.post('/deleteQuestionAnswer/:id/questionAnswerId/:quesid',verifyUser,dele
 /****** testApi's start from here ******/
 router.post('/createTest/:id',verifyUser,createTest) /* manual or ai creation */
 router.post('/validateTest/:testId/:subjectId',verifyUser,validateTest)
+/* block/unblock api's */
+router.post('/block/:stuId',verifyUser,blockStudent)
+router.post('/unblock/:stuId',verifyUser,unblockStudent)
+router.get('/studentResult/:stuId/:subId',verifyUser,viewStudentResult)
 
 export default router
