@@ -162,3 +162,17 @@ Return ONLY a JSON object: {"marksObtained": number}`
     return { marksObtained: 0, error: "AI failed to evaluate" };
   }
 };
+
+export const AiChatBot = async (question) => {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: question }],
+      },
+    ],
+  });
+
+  return response.text;
+};
