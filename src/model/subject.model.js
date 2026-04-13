@@ -11,6 +11,15 @@ const subjectSchema = new mongoose.Schema({
     description : {
         type : String,
     },
+    subjectCode : {
+        type : String,
+    },
+    modules : {
+        type : String,
+    },
+    lesson : {
+        type : String,
+    },
     admin : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "user",

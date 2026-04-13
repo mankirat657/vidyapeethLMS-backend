@@ -1,6 +1,6 @@
 import express from "express";
 import { verifyUser } from "../middleware/auth.middleware.js";
-import { blockStudent, createQuestionAnswers, createSubject, deleteQuestionAnswer, deleteSubject, unblockStudent, updateQuestionAnswer, updateSubject, viewStudentResult } from "../controller/admin.controller.js";
+import { blockStudent, createQuestionAnswers, createSubject, deleteQuestionAnswer, deleteSubject, getSubject, unblockStudent, updateQuestionAnswer, updateSubject, viewStudentResult } from "../controller/admin.controller.js";
 import multer from "multer";
 import { createTest, validateTest } from "../controller/test.controller.js";
 const router = express.Router();
@@ -16,26 +16,26 @@ POST : admin can view Performance of students
 
 */
 /*subject api's */
-
-router.post("/createSubject",verifyUser,createSubject)
-router.post('/updateSubject/:id',verifyUser,updateSubject)
-router.delete('/deleteSubject/:id',verifyUser,deleteSubject)
+router.get("/admin/getSubject",verifyUser,getSubject)
+router.post("/admin/createSubject",verifyUser,createSubject)
+router.post('/admin/updateSubject/:id',verifyUser,updateSubject)
+router.delete('/admin/deleteSubject/:id',verifyUser,deleteSubject)
 
 /*Question/Answers routes */
-router.post('/questionAnswers/:id',verifyUser,upload.single("file"),createQuestionAnswers) /*manual creation and ai creation */
+router.post('/admin/questionAnswers/:id',verifyUser,upload.single("file"),createQuestionAnswers) /*manual creation and ai creation */
 router.post(
-  '/updateQuestionAnswer/:id/question/:quesId/answer/:ansId',
+  '/admin/updateQuestionAnswer/:id/question/:quesId/answer/:ansId',
   verifyUser,
   updateQuestionAnswer
 );
-router.post('/deleteQuestionAnswer/:id/questionAnswerId/:quesid',verifyUser,deleteQuestionAnswer)
+router.post('/admin/deleteQuestionAnswer/:id/questionAnswerId/:quesid',verifyUser,deleteQuestionAnswer)
 /***************knowledge Bank api ends here *************************/
 /****** testApi's start from here ******/
-router.post('/createTest/:id',verifyUser,createTest) /* manual or ai creation */
-router.post('/validateTest/:testId/:subjectId',verifyUser,validateTest)
+router.post('/admin/createTest/:id',verifyUser,createTest) /* manual or ai creation */
+router.post('/admin/validateTest/:testId/:subjectId',verifyUser,validateTest)
 /* block/unblock api's */
-router.post('/block/:stuId',verifyUser,blockStudent)
-router.post('/unblock/:stuId',verifyUser,unblockStudent)
-router.get('/studentResult/:stuId/:subId',verifyUser,viewStudentResult)
+router.post('/admin/block/:stuId',verifyUser,blockStudent)
+router.post('/admin/unblock/:stuId',verifyUser,unblockStudent)
+router.get('/admin/studentResult/:stuId/:subId',verifyUser,viewStudentResult)
 
 export default router

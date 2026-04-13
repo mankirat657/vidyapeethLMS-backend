@@ -1,5 +1,5 @@
 import express from "express";
-import { forgotPassword, loginUser, logoutUser, registerUser, resetPassword } from "../controller/auth.controller.js";
+import { forgotPassword, getMe, loginUser, logoutUser, registerUser, resetPassword } from "../controller/auth.controller.js";
 import multer from "multer";
 const router = express.Router();
 
@@ -12,5 +12,6 @@ router.post("/login",loginUser)
 router.post("/forgotPassword",forgotPassword)
 router.post('/resetPassword',resetPassword);
 router.delete("/logout",logoutUser)
+router.get("/me", getMe);
 
 export default router;

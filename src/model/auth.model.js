@@ -11,10 +11,7 @@ const authSchema = new mongoose.Schema({
     },
     lastName: {
       type: String,
-      required: true,
       trim: true,
-      minlength: 2,
-      maxlength: 30
     }
   },
   picture: {

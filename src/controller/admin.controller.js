@@ -5,16 +5,29 @@ import { generateQuestionAnswers } from "../service/ai.service.js";
 import { uploadFile } from "../service/storage.service.js";
 import { userModel } from "../model/auth.model.js";
 import { resultModel } from "../model/result.model.js";
+export const getSubject = async(req,res) =>{
+  try {
+    const subjects = await subjectModel.find();
 
+    return res.status(200).json({
+      message : "subjects fetched successfully",
+      subjects
+    })
+  } catch (error) {
+    return res.status(403).json({
+      message : `error occured ${error}`
+    })
+  }
+}
 export const createSubject = async(req,res) =>{
     try {
-        const {name,description} = req.body;
+        const {name,description,subjectCode,modules,lesson} = req.body;
         if(req.user.role !== "admin"){
             return res.status(403).json({
                 message : "Access Denied"
             })
         }
-        if(!name || !description){
+        if(!name && !description){
             return res.status(400).json({
                 message : "name or description is required"
             })
@@ -29,6 +42,9 @@ export const createSubject = async(req,res) =>{
         const subject = await subjectModel.create({
             name,
             description,
+            subjectCode,
+            modules,
+            lesson,
             admin : req.user._id
         })
         return res.status(201).json({
