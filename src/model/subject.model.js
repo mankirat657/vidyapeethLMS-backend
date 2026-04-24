@@ -5,7 +5,7 @@ const subjectSchema = new mongoose.Schema({
         type : String,
         required : true,
         minlength : [3, "subject should be atleast 3 characters long"],
-        maxlength : [30,"subject cannot exceeds 30 characters"],
+        maxlength : [50,"subject cannot exceeds 30 characters"],
         unique :true
     },
     description : {

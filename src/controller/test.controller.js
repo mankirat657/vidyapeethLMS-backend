@@ -4,6 +4,28 @@ import { questionModel } from "../model/question.model.js";
 import { testModel } from "../model/test.model.js";
 import { generateTest, validateAiTest } from "../service/ai.service.js";
 import { resultModel } from "../model/result.model.js"
+export const getPrevTest = async(req,res) => {
+    try {
+        const {id : subjectId} = req.params;
+        if(!subjectId){
+            return res.status(403).json({
+                message : "Subject Id needed!"
+            })
+        }
+        const getTest = await testModel.find({subject : subjectId}).populate('questions');
+        console.log(getTest);
+        
+        return res.status(200).json({
+            message : "test fetched successfully",
+            getTest
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message : `error occured ${error}`
+        })
+    }
+}
 export const createTest = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -58,7 +80,7 @@ export const createTest = async (req, res) => {
 
             return res.status(201).json({
                 message: "test created successfully",
-                testId: test[0]._id
+                getTest: test
             })
         }
         const createdQuestions = await questionModel.insertMany(
@@ -86,7 +108,8 @@ export const createTest = async (req, res) => {
 
         return res.status(201).json({
             message: "Test created successfully",
-            testId: test[0]._id
+            // testId: test[0]._id
+            getTest : test
         });
 
     } catch (error) {

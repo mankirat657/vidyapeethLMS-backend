@@ -8,7 +8,6 @@ const answerSchema = new mongoose.Schema({
 const questionSchema = new mongoose.Schema({
     questionText: {
         type: String,
-        required: true,
         minlength: [4, "Minimum length of question should be 4"],
         maxlength: [500, "Maximum length of question should be 500"],
     },
@@ -16,7 +15,6 @@ const questionSchema = new mongoose.Schema({
         type: String,
         enum: ["Multiple_Choice", "Fill_In_The_Blanks", "Long_Answers", "True/False"],
         default : "Long_Answers",
-        required: true
     },
     weightage: { type: Number, default: 1 },
     isAiGenerated: { type: Boolean, default: false },
@@ -28,7 +26,6 @@ const knowledgeBankContentSchema = new mongoose.Schema({
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
     questions: { type: [questionSchema], required: true }, 
     pdf: String,
-    subjectWeightage: String
 }, {
     timestamps: true
 });

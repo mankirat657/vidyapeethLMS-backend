@@ -5,7 +5,9 @@ import authRoutes from './routes/auth.routes.js'
 import adminRoutes from './routes/admin.routes.js'
 import studentRoutes from './routes/student.routes.js'
 import { Strategy  } from "passport-google-oauth20";
-import 'dotenv/config';
+import dotenv from "dotenv";
+dotenv.config();
+
 import cookieParser from "cookie-parser";
 import cors from "cors"
 const app = express();

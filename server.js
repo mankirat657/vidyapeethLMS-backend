@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { setUpDoubtAi } from "./src/socket/socket.js";
 const httpServer = createServer(app);
+
 export const io = new Server(httpServer, { /* options */ });
 /*student ask doubt with ai */
 setUpDoubtAi(io);
