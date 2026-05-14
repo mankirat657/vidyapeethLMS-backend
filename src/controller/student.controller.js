@@ -2,6 +2,7 @@ import { userModel } from "../model/auth.model.js";
 import { contentModel } from "../model/knowledgeBankContent.model.js";
 import { resultModel } from "../model/result.model.js";
 
+
 export const getResult = async(req,res) =>{
     try {
         const {stuId,subId} = req.params;

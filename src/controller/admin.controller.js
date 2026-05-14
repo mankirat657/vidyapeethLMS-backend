@@ -135,6 +135,23 @@ export const deleteSubject = async (req, res) => {
     })
   }
 }
+export const getAllQuestionAnswers = async(req,res) => {
+  try {
+    if(req.user.role !== 'admin'){
+      return res?.status(400).json({
+        message : "only admins are allowed in this"
+      })
+    }
+    const questionAnswers = await contentModel.find();
+    return res.status(200).json({
+      questionAnswers
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message :`error occured ${error}`,
+    })
+  }
+}
 export const getQuestionAnswers = async (req, res) => {
   try {
     const { id: subjectId } = req.params;
@@ -334,7 +351,6 @@ export const updateQuestionAnswer = async (req, res) => {
     });
   }
 };
-import mongoose from "mongoose";
 
 export const deleteQuestionAnswer = async (req, res) => {
   const { id: subjectId, quesid: questionId } = req.params;

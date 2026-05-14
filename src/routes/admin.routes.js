@@ -1,8 +1,8 @@
 import express from "express";
 import { verifyUser } from "../middleware/auth.middleware.js";
-import { blockStudent, createQuestionAnswers, createSubject, deleteContent, deleteQuestionAnswer, deleteSubject, getQuestionAnswers, getStudents, getSubject, unblockStudent, updateQuestionAnswer, updateSubject, viewStudentResult } from "../controller/admin.controller.js";
+import { blockStudent, createQuestionAnswers, createSubject, deleteContent, deleteQuestionAnswer, deleteSubject, getAllQuestionAnswers, getQuestionAnswers, getStudents, getSubject, unblockStudent, updateQuestionAnswer, updateSubject, viewStudentResult } from "../controller/admin.controller.js";
 import multer from "multer";
-import { createTest, getPrevTest, validateTest } from "../controller/test.controller.js";
+import { createTest, getAllTest, getPrevTest, startTest, validateTest } from "../controller/test.controller.js";
 const router = express.Router();
 const upload = multer({storage : multer.memoryStorage()})
 
@@ -22,6 +22,7 @@ router.post('/admin/updateSubject/:id',verifyUser,updateSubject) // ✅
 router.delete('/admin/deleteSubject/:id',verifyUser,deleteSubject) // ✅
 
 /*Question/Answers routes */
+router.get('/admin/getAllQuestionAnswers',verifyUser,getAllQuestionAnswers);
 router.get('/admin/getQuestionAnswers/:id',verifyUser,getQuestionAnswers)
 router.post('/admin/questionAnswers/:id',verifyUser,upload.single("file"),createQuestionAnswers) /*manual creation and ai creation */
 router.post(
@@ -34,9 +35,11 @@ router.delete('/admin/deleteContent/:id', verifyUser, deleteContent);
 
 /***************knowledge Bank api ends here *************************/
 /****** testApi's start from here ******/
+router.get('/admin/getAllTest',verifyUser,getAllTest)
 router.get('/admin/getTest/:id',verifyUser,getPrevTest)
 router.post('/admin/createTest/:id',verifyUser,createTest) /* manual or ai creation */
 router.post('/admin/validateTest/:testId/:subjectId',verifyUser,validateTest)
+router.post('/admin/testAttempt/:testId',verifyUser,startTest)
 /* block/unblock api's */
 router.get('/admin/getStudents',verifyUser,getStudents)
 router.post('/admin/block/:stuId',verifyUser,blockStudent)

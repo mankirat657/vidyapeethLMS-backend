@@ -28,13 +28,14 @@ export const googleAuthLogin = async (req, res) => {
     const token = jwt.sign(
       { user: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
       sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.redirect("http://localhost:5173/auth-success");

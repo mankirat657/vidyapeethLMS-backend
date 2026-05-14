@@ -13,6 +13,11 @@ const testSchema = new mongoose.Schema({
         required : true,
         index : true
     },
+    isFinished : {
+        type : String,
+        enum : ["true","false"],
+        default : "NEW"
+    },
     questions : [{
         type : mongoose.Schema.Types.ObjectId,
         ref : "question"
