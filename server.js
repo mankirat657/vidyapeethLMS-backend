@@ -7,7 +7,13 @@ import { Server } from "socket.io";
 import { setUpDoubtAi } from "./src/socket/socket.js";
 const httpServer = createServer(app);
 
-export const io = new Server(httpServer, { /* options */ });
+export const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173", 
+    credentials: true,
+    methods: ["GET", "POST"],
+  },    
+});
 /*student ask doubt with ai */
 setUpDoubtAi(io);
 connectDb()

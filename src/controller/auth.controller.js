@@ -16,14 +16,12 @@ export const registerUser = async (req, res) => {
                 message: "firstName, lastName, email or password is required"
             })
         }
-        //checking if user already exist
         const user = await userModel.findOne({ email })
         if (user) {
             return res.status(400).json({
                 message: "user already registered"
             })
         }
-        //validating the email
         const validationResult = await validate(email);
         console.log("email validated");
 
@@ -41,7 +39,6 @@ export const registerUser = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const verificationToken = crypto.randomBytes(32).toString("hex")
         const newUser = await userModel.create({
             fullName: {
                 firstName: firstName,
@@ -50,13 +47,13 @@ export const registerUser = async (req, res) => {
             email: email,
             password: hashedPassword,
             authProvider: "local",
-            isVerified: false,
-            verificationToken: verificationToken,
+            isVerified: true,
             picture: pictureUrl,
             role: "user",
             course: course
 
         })
+        const token = jwt.sign({ user: newUser._id }, process.env.JWT_SECRET);
         res.cookie("token", token, {
             httpOnly: true,      
             maxAge: 7 * 24 * 60 * 60 * 1000, 
@@ -66,7 +63,7 @@ export const registerUser = async (req, res) => {
 
 
         return res.status(201).json({
-            message: "user registered, please verify your email",
+            message: "user registered",
             newUser
         })
     } catch (error) {

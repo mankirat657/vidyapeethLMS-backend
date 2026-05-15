@@ -16,7 +16,11 @@ const testSchema = new mongoose.Schema({
     isFinished : {
         type : String,
         enum : ["true","false"],
-        default : "NEW"
+        default : "false"
+    },
+    isPublished : {
+        type : Boolean,
+        default : false
     },
     questions : [{
         type : mongoose.Schema.Types.ObjectId,

@@ -4,6 +4,7 @@ import { questionModel } from "../model/question.model.js";
 import { testModel } from "../model/test.model.js";
 import { generateTest, validateAiTest } from "../service/ai.service.js";
 import { resultModel } from "../model/result.model.js"
+import {io} from '../../server.js'
 export const getAllTest = async(req,res) => {
     try {
         const test = await testModel.find().populate("questions").populate("subject");
@@ -342,3 +343,21 @@ export const validateTest = async (req, res) => {
     });
   }
 };
+export const publishTest = async(req,res)=>{
+  try {
+    const {testId} = req.params;
+    if(!testId) return res.status(400).json({message : "testId needed"});
+    const test = await  testModel.findByIdAndUpdate(testId,{isPublished : true},{new : true  }).populate("subject");
+    if(!test) return res.status(400).json({message : "there is no test associated with this id"})
+    io.to("students").emit("testPublished",test);
+    return res.status(200).json({
+      message : "test has been published",
+      test
+    })
+
+  } catch (error) {
+    console.log(error);
+    
+    return res.status(500).json({message : `error occured ${error}`})
+  }
+}
