@@ -2,7 +2,7 @@ import express from "express";
 import { verifyUser } from "../middleware/auth.middleware.js";
 import { blockStudent, createQuestionAnswers, createSubject, deleteContent, deleteQuestionAnswer, deleteSubject, getAllQuestionAnswers, getQuestionAnswers, getStudents, getSubject, unblockStudent, updateQuestionAnswer, updateSubject, viewStudentResult } from "../controller/admin.controller.js";
 import multer from "multer";
-import { createTest, getAllTest, getPrevTest, publishTest, startTest, validateTest } from "../controller/test.controller.js";
+import { createTest, deleteTest, getAllTest, getPrevTest, publishTest, startTest, validateTest } from "../controller/test.controller.js";
 const router = express.Router();
 const upload = multer({storage : multer.memoryStorage()})
 
@@ -41,6 +41,7 @@ router.post('/admin/createTest/:id',verifyUser,createTest) /* manual or ai creat
 router.post('/admin/validateTest/:testId/:subjectId',verifyUser,validateTest)
 router.post('/admin/testAttempt/:testId',verifyUser,startTest)
 router.post('/admin/publishTest/:testId',verifyUser,publishTest);
+router.delete('/admin/deleteTest/:testId',verifyUser,deleteTest)
 /* block/unblock api's */
 router.get('/admin/getStudents',verifyUser,getStudents)
 router.post('/admin/block/:stuId',verifyUser,blockStudent)

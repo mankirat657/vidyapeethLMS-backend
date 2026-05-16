@@ -44,42 +44,36 @@ export const startTest = async (req, res) => {
     const { testId } = req.params;
 
     const test = await testModel.findById(testId);
+
     if (!test) {
       return res.status(404).json({
         message: "Test not found",
       });
     }
 
-    const existingAttempt = await testAttemptModel.findOne({
-      student: req.user._id,
-      test: testId,
-    });
-
-    if (existingAttempt) {
-      return res.status(200).json({
-        attemptId: existingAttempt._id,
-        startedAt: existingAttempt.startedAt,
-        expiresAt: existingAttempt.expiresAt,
+    if (!test.isPublished) {
+      return res.status(400).json({
+        message: "Test is not published yet",
       });
     }
 
-    const startedAt = new Date();
-    const expiresAt = new Date(
-      startedAt.getTime() + test.testDuration * 60 * 1000
-    );
+    if (!test.startTime || !test.endTime) {
+      return res.status(400).json({
+        message: "Test has not started yet",
+      });
+    }
 
-    const attempt = await testAttemptModel.create({
-      student: req.user._id,
-      test: testId,
-      startedAt,
-      expiresAt,
-    });
+    if (new Date() > test.endTime) {
+      return res.status(400).json({
+        message: "Test time is over",
+      });
+    }
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Test started successfully",
-      attemptId: attempt._id,
-      startedAt,
-      expiresAt,
+      startTime: test.startTime,
+      endTime: test.endTime,
+      serverTime: new Date(),
     });
   } catch (error) {
     return res.status(500).json({
@@ -347,7 +341,19 @@ export const publishTest = async(req,res)=>{
   try {
     const {testId} = req.params;
     if(!testId) return res.status(400).json({message : "testId needed"});
-    const test = await  testModel.findByIdAndUpdate(testId,{isPublished : true},{new : true  }).populate("subject");
+ 
+    const existingTest = await testModel.findById(testId);
+
+    if (!existingTest) {
+      return res.status(404).json({
+        message: "Test not found",
+      });
+    }
+       const startTime = new Date();
+    const endTime = new Date(
+      startTime.getTime() + existingTest.testDuration * 60 * 1000
+    );
+    const test = await  testModel.findByIdAndUpdate(testId,{isPublished : true,startTime,endTime},{new : true  }).populate("subject");
     if(!test) return res.status(400).json({message : "there is no test associated with this id"})
     io.to("students").emit("testPublished",test);
     return res.status(200).json({
@@ -359,5 +365,15 @@ export const publishTest = async(req,res)=>{
     console.log(error);
     
     return res.status(500).json({message : `error occured ${error}`})
+  }
+}
+export const deleteTest = async(req,res)=>{
+  try {
+    const{testId} = req.params;
+
+    await testModel.findByIdAndDelete(testId);
+    return res.status(200).json({message : "test successfully deleted"});
+  } catch (error) {
+    return res.status(403).json({message : `error occured ${error}`});
   }
 }
